@@ -1,0 +1,9 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "java",
+    "NOTIFY_QUEUE_NAME": "notify_queue",
+    "NOTIFY_QUEUE_CONNECTION_NAME": ""
+  }
+}
