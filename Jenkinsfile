@@ -1,4 +1,4 @@
-@Library('pipeline-library@feature/IMTA-10231-skeleton-text-email-function') _
+@Library('pipeline-library') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
