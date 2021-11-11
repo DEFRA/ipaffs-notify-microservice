@@ -23,9 +23,11 @@
 
     <azure.functions.java.library.version>1.4.0</azure.functions.java.library.version>
     <azure.functions.maven.plugin.version>1.9.0</azure.functions.maven.plugin.version>
+    <azure.core.serializer.json.jackson.version>1.2.8</azure.core.serializer.json.jackson.version>
     <commons.io.version>2.6</commons.io.version>
     <jacoco.maven.plugin.version>0.8.2</jacoco.maven.plugin.version>
     <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
+    <jackson.core.version>2.11.4</jackson.core.version>
     <json.unit.version>2.28.0</json.unit.version>
     <maven.checkstyle.version>3.0.0</maven.checkstyle.version>
     <owasp.version>6.0.1</owasp.version>
@@ -56,6 +58,20 @@
       <artifactId>jaxb-api</artifactId>
       <version>${javax.xml.bind.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-core-serializer-json-jackson</artifactId>
+      <version>${azure.core.serializer.json.jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+
 
     <!-- Test -->
     <dependency>
@@ -89,6 +105,11 @@
       <artifactId>mockwebserver</artifactId>
       <version>${okhttp3.version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons.io.version}</version>
     </dependency>
   </dependencies>
 

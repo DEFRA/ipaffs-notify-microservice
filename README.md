@@ -90,3 +90,13 @@ variables have been set.
 | `PROTOCOL` | The HTTP protocol used when connecting to IPAFFS components | `https` |
 | `ENV_DOMAIN` | The IPAFFS deployment domain (e.g. pool number or RTL environment) | `-integration.azurewebsites.net` |
 | `NOTIFY_QUEUE_NAME` | The name of the notify service bus queue | `notify_queue` |
+| `ENABLE_EMAIL_NOTIFICATION` | Flag to enable or disable email notify functionality | `false/true` |
+| `ENABLE_TEXT_NOTIFICATION` | Flag to enable or disable text notify functionality | `false/true` |
+| `TRADE_PLATFORM_AUTH_URL` | Trade Auth URL for token generation | |
+| `TRADE_PLATFORM_NOTIFY_URL` | Trade Notify URL for email/Text Notification | |
+| `TRADE_PLATFORM_CLIENT_ID` | Trade Platform client ID | |
+| `TRADE_PLATFORM_CLIENT_SECRET` | Trade Platform client Secret | |
+| `TRADE_PLATFORM_SCOPE` | Trade Platform Scope | |
+| `TRADE_PLATFORM_SYSTEM_NAME` | Trade Platform System Name | `IPAFFS` |
+| `TRADE_PLATFORM_SYSTEM_UNIQUE_ID` | Trade Platform System Unique ID | |
+| `TRADE_PLATFORM_SUBSCRIPTION_KEY` | Trade Platform Subscription Key | |
