@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/imta-10233-alert-text-email-failures') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
