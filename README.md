@@ -76,6 +76,8 @@ The coverage report can be created with:
 The coverage report can then be viewed by opening the `target/site/jacoco/index.html` file in your
 browser.
 
+### Sample tests
+
 ### Integration tests
 
 ## Additional Information
