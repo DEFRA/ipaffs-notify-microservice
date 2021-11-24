@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/IMTA-10734-IMTA-10825-risk-locking-notify-RTL') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
