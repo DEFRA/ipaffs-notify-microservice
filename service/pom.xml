@@ -69,6 +69,11 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-transport</artifactId>
+      <version>4.1.73.Final</version>
+    </dependency>
+    <dependency>
       <groupId>com.azure</groupId>
       <artifactId>azure-core-serializer-json-jackson</artifactId>
       <version>${azure.core.serializer.json.jackson.version}</version>
