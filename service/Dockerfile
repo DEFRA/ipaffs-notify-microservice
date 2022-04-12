@@ -9,7 +9,7 @@ RUN mkdir -p /home/site/wwwroot && \
     cd $(ls -d */|head -n 1) && \
     cp -a . /home/site/wwwroot
 
-FROM $BASE_IMAGE$JAVA_VERSION-appservice
+FROM $BASE_IMAGE$JAVA_VERSION
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
