@@ -5,10 +5,23 @@
 Java Azure Function to notify drivers/hauliers by email/text when a notification has been selected for 
 inspection.
 
+## Secret scanning
+Secret scanning is setup using [truffleHog](https://github.com/trufflesecurity/truffleHog).
+It is used as a pre-push hook and will scan any local commits being pushed
+
+### Pre-push hook setup
+1. Install [truffleHog](https://github.com/trufflesecurity/truffleHog)
+    - `brew install go`
+    - `git clone https://github.com/trufflesecurity/trufflehog.git`
+    - `cd trufflehog; go install`
+2. Set DEFRA_WORKSPACE env var (`export DEFRA_WORKSPACE=/path/to/workspace`)
+3. Potentially there's an older version of Trufflehog located at: `/usr/local/bin/trufflehog`. If so, remove this.
+4. Create a symlink: `ln -s ~/go/bin/truffleHog /usr/local/bin/trufflehog`
+5. From this project root directory copy the pre-push hook: `cp hooks/pre-push .git/hooks/pre-push`
+
 ## Set up
 
-Ensure that you have the necessary configuration to resolve dependencies from Artifactory:
-https://eaflood.atlassian.net/wiki/spaces/IT/pages/1047823027/Artifactory.
+Ensure that you have the necessary configuration to resolve dependencies from Artifactory.
 
 Copy the .env file from Sharepoint into the root of this project.
 
@@ -85,18 +98,18 @@ browser.
 When the function is initiated the runtime environment is validated to ensure that all required
 variables have been set.
 
-| Environment variable | Description | Example |
-| -------------------- | ----------- | ------- |
-| `PROTOCOL` | The HTTP protocol used when connecting to IPAFFS components | `https` |
-| `ENV_DOMAIN` | The IPAFFS deployment domain (e.g. pool number or RTL environment) | `-integration.azurewebsites.net` |
-| `NOTIFY_QUEUE_NAME` | The name of the notify service bus queue | `notify_queue` |
-| `ENABLE_EMAIL_NOTIFICATION` | Flag to enable or disable email notify functionality | `false/true` |
-| `ENABLE_TEXT_NOTIFICATION` | Flag to enable or disable text notify functionality | `false/true` |
-| `TRADE_PLATFORM_AUTH_URL` | Trade Auth URL for token generation | |
-| `TRADE_PLATFORM_NOTIFY_URL` | Trade Notify URL for email/Text Notification | |
-| `TRADE_PLATFORM_CLIENT_ID` | Trade Platform client ID | |
-| `TRADE_PLATFORM_CLIENT_SECRET` | Trade Platform client Secret | |
-| `TRADE_PLATFORM_SCOPE` | Trade Platform Scope | |
-| `TRADE_PLATFORM_SYSTEM_NAME` | Trade Platform System Name | `IPAFFS` |
-| `TRADE_PLATFORM_SYSTEM_UNIQUE_ID` | Trade Platform System Unique ID | |
-| `TRADE_PLATFORM_SUBSCRIPTION_KEY` | Trade Platform Subscription Key | |
+| Environment variable | Description |
+| -------------------- | ----------- |
+| `PROTOCOL` | The HTTP protocol used when connecting to IPAFFS components |
+| `ENV_DOMAIN` | The IPAFFS deployment domain (e.g. pool number or RTL environment) |
+| `NOTIFY_QUEUE_NAME` | The name of the notify service bus queue |
+| `ENABLE_EMAIL_NOTIFICATION` | Flag to enable or disable email notify functionality |
+| `ENABLE_TEXT_NOTIFICATION` | Flag to enable or disable text notify functionality |
+| `TRADE_PLATFORM_AUTH_URL` | Trade Auth URL for token generation |
+| `TRADE_PLATFORM_NOTIFY_URL` | Trade Notify URL for email/Text Notification |
+| `TRADE_PLATFORM_CLIENT_ID` | Trade Platform client ID |
+| `TRADE_PLATFORM_CLIENT_SECRET` | Trade Platform client Secret |
+| `TRADE_PLATFORM_SCOPE` | Trade Platform Scope |
+| `TRADE_PLATFORM_SYSTEM_NAME` | Trade Platform System Name |
+| `TRADE_PLATFORM_SYSTEM_UNIQUE_ID` | Trade Platform System Unique ID |
+| `TRADE_PLATFORM_SUBSCRIPTION_KEY` | Trade Platform Subscription Key |
