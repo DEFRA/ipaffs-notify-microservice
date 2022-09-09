@@ -107,9 +107,7 @@ public class NotifyFunction {
 
   protected TradePlatformApiClient tradePlatformApiClient(
       final NotifyProperties properties, final Logger logger) {
-    final WebClient webClient = WebClient.builder()
-        .filter(logResponse(logger))
-        .build();
+    final WebClient webClient = getWebClientBuild(logger);
     final String token = tradePlatformTokenGeneratorService(properties, logger).generateToken();
     return new TradePlatformApiClient(
         logger,
@@ -120,9 +118,15 @@ public class NotifyFunction {
     );
   }
 
+  protected WebClient getWebClientBuild(Logger logger) {
+    return WebClient.builder()
+        .filter(logResponse(logger))
+        .build();
+  }
+
   protected TradePlatformTokenGeneratorService tradePlatformTokenGeneratorService(
       final NotifyProperties properties, final Logger logger) {
-    final WebClient webClient = WebClient.create();
+    final WebClient webClient = getWebClient();
     return new TradePlatformTokenGeneratorService(
         logger,
         webClient,
@@ -132,11 +136,15 @@ public class NotifyFunction {
         properties.getTradePlatformScope());
   }
 
-  private ExchangeFilterFunction logResponse(final Logger logger) {
+  protected WebClient getWebClient() {
+    return WebClient.create();
+  }
+
+  protected ExchangeFilterFunction logResponse(final Logger logger) {
     return ExchangeFilterFunction.ofResponseProcessor(response -> logBody(response, logger));
   }
 
-  private Mono<ClientResponse> logBody(final ClientResponse response,
+  protected Mono<ClientResponse> logBody(final ClientResponse response,
       final Logger logger) {
     if (response.statusCode().is4xxClientError()) {
       return response.bodyToMono(String.class)
