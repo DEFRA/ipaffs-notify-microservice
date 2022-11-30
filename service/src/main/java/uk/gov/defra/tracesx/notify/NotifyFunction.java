@@ -2,7 +2,6 @@ package uk.gov.defra.tracesx.notify;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -37,7 +36,8 @@ public class NotifyFunction {
       @ServiceBusQueueTrigger(name = "message",
           queueName = "%NOTIFY_QUEUE_NAME%",
           connection = "NOTIFY_QUEUE_CONNECTION_NAME")
-          String message, final ExecutionContext context) throws JsonProcessingException {
+      String message,
+      final ExecutionContext context) throws JsonProcessingException {
 
     Logger logger = context.getLogger();
     logger.info("NotifyFunction starting");
@@ -45,24 +45,38 @@ public class NotifyFunction {
     final NotifyProperties notifyProperties = NotifyProperties.properties(logger);
 
     QueueMessage queueMessage = objectMapper.readValue(message, QueueMessage.class);
-    logger.info(
-        "Notification reference received from queue -->>" + queueMessage.getMessagePersonalisation()
-            .getReferenceNumber());
+    logger.info(String.format(
+        "Notification reference received from queue %s, with template ID %s",
+        queueMessage.getMessagePersonalisation().getReferenceNumber(),
+        queueMessage.getMessageTemplateId()
+    ));
 
     if (isEligibleForNotification(notifyProperties, queueMessage)) {
       submitForNotification(logger, notifyProperties, queueMessage);
     } else {
-      logNotificationMessage(message, logger, queueMessage);
+      logNonSubmittedMessage(logger, queueMessage);
     }
     logger.info("NotifyFunction stopping");
   }
 
-  private void logNotificationMessage(String message, Logger logger, QueueMessage queueMessage) {
-    logger.info("Message received from queue -->>" + message);
-    logMessage(logger, queueMessage, queueMessage.getEmails(),
-        "Email set to LOG Only: EMAIL: %s, Template Id: %s, Content: %s ");
-    logMessage(logger, queueMessage, queueMessage.getPhoneNumbers(),
-        "Text set to LOG Only: Number: %s, Template Id: %s, Content: %s ");
+  private void logNonSubmittedMessage(Logger logger, QueueMessage queueMessage) {
+    logMessage(logger, queueMessage, queueMessage.getEmails(), "emails");
+    logMessage(logger, queueMessage, queueMessage.getPhoneNumbers(), "phone numbers");
+  }
+
+  private static void logMessage(Logger logger, QueueMessage queueMessage,
+      List<String> contactsDetails,
+      String type) {
+    if (contactsDetails != null) {
+      logger.info(String.format(
+          "Message not eligible for sending, message had %d %s for template "
+              + "ID %s and notification reference %s",
+          contactsDetails.size(),
+          type,
+          queueMessage.getMessageTemplateId(),
+          queueMessage.getMessagePersonalisation().getReferenceNumber()
+      ));
+    }
   }
 
   private boolean isEligibleForNotification(final NotifyProperties notifyProperties,
@@ -93,16 +107,6 @@ public class NotifyFunction {
     logger.info(String.format("Successfully sent message to Notify API (reference %s) for"
             + " processing of notification -->> %s", successResponse.getReference(),
         template.getReference()));
-  }
-
-  private void logMessage(final Logger logger, final QueueMessage queueMessage,
-      final List<String> emailOrPhone,
-      final String logMessageContent) {
-    ofNullable(emailOrPhone).ifPresent(email -> logger.info(
-        format(logMessageContent,
-            collectionToDelimitedString(email, ","),
-            queueMessage.getMessageTemplateId(),
-            queueMessage.getMessagePersonalisation())));
   }
 
   protected TradePlatformApiClient tradePlatformApiClient(
