@@ -80,7 +80,7 @@ public class NotifyFunctionTest {
     environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
     logHandler.assertLogged(Level.INFO, "NotifyFunction starting");
     logHandler.assertLogged(Level.INFO,
-        "Message received from queue -->>" + queueMessage);
+        "Notification reference received from queue CHEDD-12345, with template ID 0b059aa6-1840-408c-aa1b-a53aa16b815d");
     logHandler.assertLogged(Level.INFO, "NotifyFunction stopping");
   }
 
@@ -90,9 +90,9 @@ public class NotifyFunctionTest {
     mockLogger();
     environment = enableEmailOrTextNotification(environment, "true", "false");
     environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
-    assertLogMessage("Text set to LOG Only: Number: 07885484684, "
-        + "Template Id: 0b059aa6-1840-408c-aa1b-a53aa16b815d, "
-        + "Content: MessagePersonalisation(referenceNumber=CHEDD-12345, bcpName=Leamington) ");
+    logHandler.assertLogged(Level.INFO,
+        "Message not eligible for sending, message had 1 phone numbers for template "
+        + "ID 0b059aa6-1840-408c-aa1b-a53aa16b815d and notification reference CHEDD-12345");
   }
 
   @Test
@@ -104,9 +104,9 @@ public class NotifyFunctionTest {
         StandardCharsets.UTF_8);
     environment = enableEmailOrTextNotification(environment, "false", "true");
     environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
-    assertLogMessage(
-        "Email set to LOG Only: EMAIL: s.chandran@kainos.com, Template Id: 2ef3e2ac-3f33-45a5-bb50-2d6cac147601, "
-            + "Content: MessagePersonalisation(referenceNumber=CHEDD-12345, bcpName=Leamington) ");
+    logHandler.assertLogged(Level.INFO,
+        "Message not eligible for sending, message had 1 emails for template "
+            + "ID 2ef3e2ac-3f33-45a5-bb50-2d6cac147601 and notification reference CHEDD-12345");
   }
 
   @Test
@@ -161,7 +161,7 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void logBodyCreation_whenStatusCodeIsClientError() throws IOException {
+  public void logBodyCreation_whenStatusCodeIsClientError() {
     mockLogger();
     ClientResponse testResponse = mock(ClientResponse.class);
     when(testResponse.statusCode()).thenReturn(HttpStatus.NOT_FOUND);
@@ -169,9 +169,7 @@ public class NotifyFunctionTest {
 
     Mono<ClientResponse> result = notifyFunction.logBody(testResponse, context.getLogger());
     StepVerifier.create(result)
-        .assertNext(data -> {
-          assertThat(testResponse).isEqualTo(data);
-        }).verifyComplete();
+        .assertNext(data -> assertThat(testResponse).isEqualTo(data)).verifyComplete();
   }
 
   @Test
@@ -180,9 +178,7 @@ public class NotifyFunctionTest {
     when(testResponse.statusCode()).thenReturn(HttpStatus.OK);
     Mono<ClientResponse> result = notifyFunction.logBody(testResponse, context.getLogger());
     StepVerifier.create(result)
-        .assertNext(data -> {
-          assertThat(testResponse).isEqualTo(data);
-        }).verifyComplete();
+        .assertNext(data -> assertThat(testResponse).isEqualTo(data)).verifyComplete();
   }
 
   @Test
@@ -274,14 +270,5 @@ public class NotifyFunctionTest {
         .and("TRADE_PLATFORM_SYSTEM_NAME", "TRADE_PLATFORM_SYSTEM_NAME")
         .and("TRADE_PLATFORM_SYSTEM_UNIQUE_ID", "TRADE_PLATFORM_SYSTEM_UNIQUE_ID")
         .and("TRADE_PLATFORM_SUBSCRIPTION_KEY", "TRADE_PLATFORM_SUBSCRIPTION_KEY");
-  }
-
-  private void assertLogMessage(String s) {
-    logHandler.assertLogged(Level.INFO, "NotifyFunction starting");
-    logHandler.assertLogged(Level.INFO,
-        "Message received from queue -->>" + queueMessage);
-    logHandler.assertLogged(Level.INFO,
-        s);
-    logHandler.assertLogged(Level.INFO, "NotifyFunction stopping");
   }
 }
