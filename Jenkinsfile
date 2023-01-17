@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/IMTA-13398-keyvault-managed-identity') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
