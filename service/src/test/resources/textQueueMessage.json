@@ -1,0 +1,9 @@
+{
+  "messageType": "TEXT",
+  "phoneNumbers": ["07885484684"],
+  "messageTemplateId": "0b059aa6-1840-408c-aa1b-a53aa16b815d",
+  "messagePersonalisation": {
+    "referenceNumber": "CHEDD-12345",
+    "bcpName": "Leamington"
+  }
+}
