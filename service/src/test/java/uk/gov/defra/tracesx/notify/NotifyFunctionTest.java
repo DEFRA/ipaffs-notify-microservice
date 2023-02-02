@@ -1,6 +1,7 @@
 package uk.gov.defra.tracesx.notify;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
+import static java.util.logging.Level.INFO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -37,7 +38,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-public class NotifyFunctionTest {
+class NotifyFunctionTest {
 
   @Mock
   private ExecutionContext context;
@@ -51,31 +52,48 @@ public class NotifyFunctionTest {
   @Spy
   private NotifyFunction notifyFunction;
 
+  private Logger logger;
   private LogHandler logHandler;
   private WithEnvironmentVariables environment;
   private String queueMessage;
 
   @BeforeEach
-  public void setup() throws IOException {
-    logHandler = new LogHandler();
+  void setup() throws IOException {
+    logger = Logger.getLogger("TestLogger");
+    logHandler = LogHandler.configure(logger);
     queueMessage = IOUtils.toString(
         LocalFunctionRunner.class.getResourceAsStream("/textQueueMessage.json"),
         StandardCharsets.UTF_8);
     environment = setUpEnvironmentVariables();
   }
 
-  private void mockLogger() {
-    Logger logger = Logger.getLogger("test logger");
-    logger.setUseParentHandlers(false);
-    logger.setLevel(Level.ALL);
-    logger.addHandler(logHandler);
+  @Test
+  void notifyTextOrEmail_LogsStartAndEnd() throws Exception {
+    // When
     when(context.getLogger()).thenReturn(logger);
+    enableEmailOrTextNotification(environment, "false", "false")
+        .execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+
+    // Then
+    logHandler.assertLogged(INFO, "NotifyFunction starting");
+    logHandler.assertLogged(INFO, "NotifyFunction stopping");
   }
 
   @Test
-  public void notifyTextOrEmail_LogsQueueMessage_WhenFunctionIsTriggered()
+  void notifyTextOrEmail_LogsVersion() throws Exception {
+    // When
+    when(context.getLogger()).thenReturn(logger);
+    enableEmailOrTextNotification(environment, "false", "false")
+        .execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+
+    // Then
+    logHandler.assertLogged(INFO, "Started IPAFFS service notify-microservice 1.2.3");
+  }
+
+  @Test
+  void notifyTextOrEmail_LogsQueueMessage_WhenFunctionIsTriggered()
       throws Exception {
-    mockLogger();
+    when(context.getLogger()).thenReturn(logger);
     environment = enableEmailOrTextNotification(environment, "false", "false");
     environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
     logHandler.assertLogged(Level.INFO, "NotifyFunction starting");
@@ -85,9 +103,9 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void notifyTextOrEmail_LogsMessageForText_WhenTextFeatureFlagIsDisabled()
+  void notifyTextOrEmail_LogsMessageForText_WhenTextFeatureFlagIsDisabled()
       throws Exception {
-    mockLogger();
+    when(context.getLogger()).thenReturn(logger);
     environment = enableEmailOrTextNotification(environment, "true", "false");
     environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
     logHandler.assertLogged(Level.INFO,
@@ -96,9 +114,9 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void notifyTextOrEmail_LogsMessageForEmail_WhenEmailFeatureFlagIsDisabled()
+  void notifyTextOrEmail_LogsMessageForEmail_WhenEmailFeatureFlagIsDisabled()
       throws Exception {
-    mockLogger();
+    when(context.getLogger()).thenReturn(logger);
     queueMessage = IOUtils.toString(
         LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json"),
         StandardCharsets.UTF_8);
@@ -110,9 +128,9 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void notifyTextOrEmail_InvokesTradeNotifyApi_WhenEmailFeatureFlagIsEnabled()
+  void notifyTextOrEmail_InvokesTradeNotifyApi_WhenEmailFeatureFlagIsEnabled()
       throws Exception {
-    mockLogger();
+    when(context.getLogger()).thenReturn(logger);
     doReturn(tradePlatformApiClient).when(notifyFunction).tradePlatformApiClient(any(), any());
     queueMessage = IOUtils.toString(
         LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json"),
@@ -128,9 +146,9 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void notifyTextOrEmail_InvokesTradeNotifyApi_WhenTextFeatureFlagIsEnabled()
+  void notifyTextOrEmail_InvokesTradeNotifyApi_WhenTextFeatureFlagIsEnabled()
       throws Exception {
-    mockLogger();
+    when(context.getLogger()).thenReturn(logger);
     doReturn(tradePlatformApiClient).when(notifyFunction).tradePlatformApiClient(any(), any());
     environment = enableEmailOrTextNotification(environment,
         "false",
@@ -143,37 +161,36 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void checkWebClientBuilder() {
+  void checkWebClientBuilder() {
     WebClient result = notifyFunction.getWebClientBuild(context.getLogger());
     assertThat(result).isNotNull();
   }
 
   @Test
-  public void checkWebClientCreation() {
+  void checkWebClientCreation() {
     WebClient result = notifyFunction.getWebClient();
     assertThat(result).isNotNull();
   }
 
   @Test
-  public void logResponseCreation() {
+  void logResponseCreation() {
     ExchangeFilterFunction result = notifyFunction.logResponse(context.getLogger());
     assertThat(result).isNotNull();
   }
 
   @Test
-  public void logBodyCreation_whenStatusCodeIsClientError() {
-    mockLogger();
+  void logBodyCreation_whenStatusCodeIsClientError() {
     ClientResponse testResponse = mock(ClientResponse.class);
     when(testResponse.statusCode()).thenReturn(HttpStatus.NOT_FOUND);
     when(testResponse.bodyToMono(String.class)).thenReturn(Mono.just("not found"));
 
-    Mono<ClientResponse> result = notifyFunction.logBody(testResponse, context.getLogger());
+    Mono<ClientResponse> result = notifyFunction.logBody(testResponse, logger);
     StepVerifier.create(result)
         .assertNext(data -> assertThat(testResponse).isEqualTo(data)).verifyComplete();
   }
 
   @Test
-  public void logBodyCreation_whenStatusCodeIsNotClientError() {
+  void logBodyCreation_whenStatusCodeIsNotClientError() {
     ClientResponse testResponse = mock(ClientResponse.class);
     when(testResponse.statusCode()).thenReturn(HttpStatus.OK);
     Mono<ClientResponse> result = notifyFunction.logBody(testResponse, context.getLogger());
@@ -182,7 +199,7 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void createTradePlatformTokenGeneratorObject() {
+  void createTradePlatformTokenGeneratorObject() {
     doReturn(webClient).when(notifyFunction).getWebClient();
 
     NotifyProperties properties = mock(NotifyProperties.class);
@@ -207,7 +224,7 @@ public class NotifyFunctionTest {
   }
 
   @Test
-  public void createTradePlatformApiClientObject() {
+  void createTradePlatformApiClientObject() {
     doReturn(webClient).when(notifyFunction).getWebClientBuild(any());
     TradePlatformTokenGeneratorService tradePlatformTokenGeneratorService = mock(
         TradePlatformTokenGeneratorService.class);
@@ -269,6 +286,7 @@ public class NotifyFunctionTest {
         .and("TRADE_PLATFORM_SCOPE", "TRADE_PLATFORM_SCOPE")
         .and("TRADE_PLATFORM_SYSTEM_NAME", "TRADE_PLATFORM_SYSTEM_NAME")
         .and("TRADE_PLATFORM_SYSTEM_UNIQUE_ID", "TRADE_PLATFORM_SYSTEM_UNIQUE_ID")
-        .and("TRADE_PLATFORM_SUBSCRIPTION_KEY", "TRADE_PLATFORM_SUBSCRIPTION_KEY");
+        .and("TRADE_PLATFORM_SUBSCRIPTION_KEY", "TRADE_PLATFORM_SUBSCRIPTION_KEY")
+        .and("API_VERSION", "1.2.3");
   }
 }
