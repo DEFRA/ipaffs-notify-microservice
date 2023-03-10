@@ -2,7 +2,6 @@ package uk.gov.defra.tracesx.notify;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
-import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,8 +43,12 @@ public class NotifyFunction {
 
     final NotifyProperties notifyProperties = NotifyProperties.properties(logger);
 
+    logger.info(() -> String.format(
+        "Started IPAFFS service notify-microservice %s",
+        notifyProperties.getVersion()));
+
     QueueMessage queueMessage = objectMapper.readValue(message, QueueMessage.class);
-    logger.info(String.format(
+    logger.info(() -> String.format(
         "Notification reference received from queue %s, with template ID %s",
         queueMessage.getMessagePersonalisation().getReferenceNumber(),
         queueMessage.getMessageTemplateId()
@@ -68,7 +71,7 @@ public class NotifyFunction {
       List<String> contactsDetails,
       String type) {
     if (contactsDetails != null) {
-      logger.info(String.format(
+      logger.info(() -> String.format(
           "Message not eligible for sending, message had %d %s for template "
               + "ID %s and notification reference %s",
           contactsDetails.size(),
@@ -104,7 +107,7 @@ public class NotifyFunction {
         notifyProperties.getTradePlatformSystemName(),
         notifyProperties.getTradePlatformSystemUniqueId());
     SuccessResponse successResponse = tradePlatformApiClient.submitRequest(template);
-    logger.info(String.format("Successfully sent message to Notify API (reference %s) for"
+    logger.info(() -> String.format("Successfully sent message to Notify API (reference %s) for"
             + " processing of notification -->> %s", successResponse.getReference(),
         template.getReference()));
   }

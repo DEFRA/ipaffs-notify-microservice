@@ -14,4 +14,7 @@ FROM $BASE_IMAGE$JAVA_VERSION
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
+ARG SERVICE_VERSION
+ENV API_VERSION=${SERVICE_VERSION}
+
 COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
