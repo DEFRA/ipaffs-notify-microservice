@@ -32,6 +32,7 @@
     <maven.checkstyle.version>3.0.0</maven.checkstyle.version>
     <owasp.version>6.5.3</owasp.version>
     <system-lambda.version>1.1.1</system-lambda.version>
+    <spring-boot-common.version>2.0.27</spring-boot-common.version>
 
     <stagingDirectory>
       ${project.build.directory}/azure-functions/${functionAppName}
@@ -71,7 +72,11 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>uk.gov.defra.tracesx</groupId>
+      <artifactId>TracesX-SpringBoot-Common-Version</artifactId>
+      <version>${spring-boot-common.version}</version>
+    </dependency>
 
     <!-- Test -->
     <dependency>
