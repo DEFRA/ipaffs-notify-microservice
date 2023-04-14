@@ -1,13 +1,12 @@
 package uk.gov.defra.tracesx.notify.sms.transformer;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import uk.gov.defra.tracesx.notify.apimodel.Template;
 import uk.gov.defra.tracesx.notify.model.QueueMessage;
 import uk.gov.defra.tracesx.notify.sms.apimodel.BatchSmsTemplate;
 import uk.gov.defra.tracesx.notify.sms.apimodel.NotificationRequestSms;
 import uk.gov.defra.tracesx.notify.transformer.MessageTransformer;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BatchSmsMessageTransformer implements MessageTransformer {
 

@@ -1,5 +1,9 @@
 package uk.gov.defra.tracesx.notify.service;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -8,11 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import uk.gov.defra.tracesx.notify.exception.NotifyException;
 import uk.gov.defra.tracesx.notify.model.Token;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TradePlatformTokenGeneratorService {
 

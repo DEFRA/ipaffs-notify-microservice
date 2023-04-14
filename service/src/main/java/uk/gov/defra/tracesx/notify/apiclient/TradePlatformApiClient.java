@@ -1,5 +1,9 @@
 package uk.gov.defra.tracesx.notify.apiclient;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -7,11 +11,6 @@ import reactor.core.publisher.Mono;
 import uk.gov.defra.tracesx.notify.apimodel.SuccessResponse;
 import uk.gov.defra.tracesx.notify.apimodel.Template;
 import uk.gov.defra.tracesx.notify.exception.NotifyException;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TradePlatformApiClient {
 

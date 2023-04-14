@@ -1,11 +1,9 @@
 package uk.gov.defra.tracesx.notify.email.apimodel;
 
-
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import uk.gov.defra.tracesx.notify.apimodel.Template;
-
-import java.util.List;
 
 @Getter
 public class BatchEmailTemplate extends Template {
