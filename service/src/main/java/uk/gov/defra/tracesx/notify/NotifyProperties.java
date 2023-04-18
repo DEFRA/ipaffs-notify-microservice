@@ -1,9 +1,8 @@
 package uk.gov.defra.tracesx.notify;
 
+import java.util.logging.Logger;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.logging.Logger;
 
 @Getter
 @Builder

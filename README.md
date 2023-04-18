@@ -19,6 +19,10 @@ It is used as a pre-push hook and will scan any local commits being pushed
 4. Create a symlink: `ln -s ~/go/bin/truffleHog /usr/local/bin/trufflehog`
 5. From this project root directory copy the pre-push hook: `cp hooks/pre-push .git/hooks/pre-push`
 
+### Git hook setup
+
+1. Run `mvn install` to configure hooks from service folder.
+
 ## Set up
 
 Ensure that you have the necessary configuration to resolve dependencies from Artifactory.
