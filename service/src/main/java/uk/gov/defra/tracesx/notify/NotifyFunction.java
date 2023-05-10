@@ -8,6 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
 import com.microsoft.azure.functions.annotation.ServiceBusQueueTrigger;
+import java.net.URI;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,11 +24,6 @@ import uk.gov.defra.tracesx.notify.model.QueueMessage;
 import uk.gov.defra.tracesx.notify.service.TradePlatformTokenGeneratorService;
 import uk.gov.defra.tracesx.notify.transformer.MessageTransformer;
 import uk.gov.defra.tracesx.notify.transformer.MessageTransformerFactory;
-
-import java.net.URI;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class NotifyFunction {
 
