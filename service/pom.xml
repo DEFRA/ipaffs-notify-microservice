@@ -7,7 +7,7 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>spring-boot-parent</artifactId>
-    <version>2.0.249</version>
+    <version>2.0.254</version>
   </parent>
 
   <groupId>uk.gov.defra.tracesx</groupId>
@@ -24,13 +24,7 @@
     <azure.functions.maven.plugin.version>1.9.0</azure.functions.maven.plugin.version>
     <azure.core.serializer.json.jackson.version>1.2.8</azure.core.serializer.json.jackson.version>
     <commons.io.version>2.6</commons.io.version>
-    <jacoco.maven.plugin.version>0.8.2</jacoco.maven.plugin.version>
     <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
-    <jackson.core.version>2.11.4</jackson.core.version>
-    <json.unit.version>2.28.0</json.unit.version>
-    <log4j2.version>2.17.1</log4j2.version>
-    <maven.checkstyle.version>3.2.1</maven.checkstyle.version>
-    <owasp.version>6.5.3</owasp.version>
     <system-lambda.version>1.1.1</system-lambda.version>
     <spring-boot-common.version>2.0.27</spring-boot-common.version>
 
@@ -151,81 +145,10 @@
             </execution>
           </executions>
         </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco.maven.plugin.version}</version>
-          <configuration>
-            <excludes>
-              <exclude>**/traceswsns/**/*</exclude>
-            </excludes>
-          </configuration>
-          <executions>
-            <execution>
-              <id>default-prepare-agent</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-check</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <rule implementation="org.jacoco.maven.RuleConfiguration">
-                    <element>BUNDLE</element>
-                    <limits>
-                      <limit implementation="org.jacoco.report.check.Limit">
-                        <counter>LINE</counter>
-                        <value>COVEREDRATIO</value>
-                      </limit>
-                    </limits>
-                  </rule>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.owasp</groupId>
-          <artifactId>dependency-check-maven</artifactId>
-          <version>${owasp.version}</version>
-          <configuration>
-            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
-          <dependencies>
-            <dependency>
-              <groupId>org.owasp</groupId>
-              <artifactId>dependency-check-maven</artifactId>
-              <version>${owasp.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.owasp</groupId>
-        <artifactId>dependency-check-maven</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>com.microsoft.azure</groupId>
         <artifactId>azure-functions-maven-plugin</artifactId>
