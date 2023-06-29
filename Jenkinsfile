@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/IMTA-14633-Allow-new-V3-subnets-access-to-services') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
