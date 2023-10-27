@@ -7,42 +7,18 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>integration-test-parent</artifactId>
-    <version>2.0.27</version>
+    <version>3.0.3</version>
   </parent>
 
   <artifactId>notify-azure-function-integration</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>notify-azure-function-integration</name>
 
-  <properties>
-    <commons-logging.version>1.2</commons-logging.version>
-
-    <!-- Spring Boot dependency version overrides -->
-    <lombok.version>1.18.20</lombok.version>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>${commons-logging.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <configuration>
-          <testFailureIgnore>false</testFailureIgnore>
-          <failIfNoTests>false</failIfNoTests>
-          <argLine>--illegal-access=permit</argLine>
-        </configuration>
       </plugin>
     </plugins>
   </build>

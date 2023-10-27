@@ -1,6 +1,5 @@
 package uk.gov.defra.tracesx.notify;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static java.util.logging.Level.INFO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -8,9 +7,15 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.org.webcompere.systemstubs.SystemStubs.withEnvironmentVariable;
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.WithEnvironmentVariables;
 import com.microsoft.azure.functions.ExecutionContext;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,12 +35,7 @@ import uk.gov.defra.tracesx.notify.email.apimodel.BatchEmailTemplate;
 import uk.gov.defra.tracesx.notify.service.TradePlatformTokenGeneratorService;
 import uk.gov.defra.tracesx.notify.sms.apimodel.BatchSmsTemplate;
 import uk.gov.defra.tracesx.notify.utils.LogHandler;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 
 @ExtendWith(MockitoExtension.class)
 class NotifyFunctionTest {
@@ -54,15 +54,24 @@ class NotifyFunctionTest {
 
   private Logger logger;
   private LogHandler logHandler;
-  private WithEnvironmentVariables environment;
-  private String queueMessage;
+  private EnvironmentVariables environment;
+  private String textQueueMessage;
+  private String emailQueueMessage;
 
   @BeforeEach
   void setup() throws IOException {
     logger = Logger.getLogger("TestLogger");
     logHandler = LogHandler.configure(logger);
-    queueMessage = IOUtils.toString(
-        LocalFunctionRunner.class.getResourceAsStream("/textQueueMessage.json"),
+
+    textQueueMessage = IOUtils.toString(
+        Objects.requireNonNull(
+            LocalFunctionRunner.class.getResourceAsStream(
+                "/textQueueMessage.json")),
+        StandardCharsets.UTF_8);
+
+    emailQueueMessage = IOUtils.toString(
+        Objects.requireNonNull(LocalFunctionRunner.class.getResourceAsStream(
+            "/emailQueueMessage.json")),
         StandardCharsets.UTF_8);
     environment = setUpEnvironmentVariables();
   }
@@ -72,7 +81,7 @@ class NotifyFunctionTest {
     // When
     when(context.getLogger()).thenReturn(logger);
     enableEmailOrTextNotification(environment, "false", "false")
-        .execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+        .execute(() -> notifyFunction.notifyTextOrEmail(textQueueMessage, context));
 
     // Then
     logHandler.assertLogged(INFO, "NotifyFunction starting");
@@ -84,7 +93,7 @@ class NotifyFunctionTest {
     // When
     when(context.getLogger()).thenReturn(logger);
     enableEmailOrTextNotification(environment, "false", "false")
-        .execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+        .execute(() -> notifyFunction.notifyTextOrEmail(textQueueMessage, context));
 
     // Then
     logHandler.assertLogged(INFO, "Started IPAFFS service notify-microservice 1.2.3");
@@ -95,7 +104,7 @@ class NotifyFunctionTest {
       throws Exception {
     when(context.getLogger()).thenReturn(logger);
     environment = enableEmailOrTextNotification(environment, "false", "false");
-    environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+    environment.execute(() -> notifyFunction.notifyTextOrEmail(textQueueMessage, context));
     logHandler.assertLogged(Level.INFO, "NotifyFunction starting");
     logHandler.assertLogged(Level.INFO,
         "Notification reference received from queue CHEDD-12345, with template ID 0b059aa6-1840-408c-aa1b-a53aa16b815d");
@@ -107,21 +116,18 @@ class NotifyFunctionTest {
       throws Exception {
     when(context.getLogger()).thenReturn(logger);
     environment = enableEmailOrTextNotification(environment, "true", "false");
-    environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+    environment.execute(() -> notifyFunction.notifyTextOrEmail(textQueueMessage, context));
     logHandler.assertLogged(Level.INFO,
         "Message not eligible for sending, message had 1 phone numbers for template "
-        + "ID 0b059aa6-1840-408c-aa1b-a53aa16b815d and notification reference CHEDD-12345");
+            + "ID 0b059aa6-1840-408c-aa1b-a53aa16b815d and notification reference CHEDD-12345");
   }
 
   @Test
   void notifyTextOrEmail_LogsMessageForEmail_WhenEmailFeatureFlagIsDisabled()
       throws Exception {
     when(context.getLogger()).thenReturn(logger);
-    queueMessage = IOUtils.toString(
-        LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json"),
-        StandardCharsets.UTF_8);
     environment = enableEmailOrTextNotification(environment, "false", "true");
-    environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+    environment.execute(() -> notifyFunction.notifyTextOrEmail(emailQueueMessage, context));
     logHandler.assertLogged(Level.INFO,
         "Message not eligible for sending, message had 1 emails for template "
             + "ID 2ef3e2ac-3f33-45a5-bb50-2d6cac147601 and notification reference CHEDD-12345");
@@ -132,16 +138,13 @@ class NotifyFunctionTest {
       throws Exception {
     when(context.getLogger()).thenReturn(logger);
     doReturn(tradePlatformApiClient).when(notifyFunction).tradePlatformApiClient(any(), any());
-    queueMessage = IOUtils.toString(
-        LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json"),
-        StandardCharsets.UTF_8);
     environment = enableEmailOrTextNotification(environment,
         "true",
         "false");
     when(tradePlatformApiClient.submitRequest(any(BatchEmailTemplate.class))).thenReturn(
         new SuccessResponse("1234", "SUBMITTED",
             "Your message has been received and ready for processing", "CHEDD-12345"));
-    environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+    environment.execute(() -> notifyFunction.notifyTextOrEmail(emailQueueMessage, context));
     assertEmailSentMessageLogged();
   }
 
@@ -156,7 +159,7 @@ class NotifyFunctionTest {
     when(tradePlatformApiClient.submitRequest(any(BatchSmsTemplate.class))).thenReturn(
         new SuccessResponse("1234", "SUBMITTED",
             "Your message has been received and ready for processing", "CHEDD-12345"));
-    environment.execute(() -> notifyFunction.notifyTextOrEmail(queueMessage, context));
+    environment.execute(() -> notifyFunction.notifyTextOrEmail(textQueueMessage, context));
     assertTextSentMessageLogged();
   }
 
@@ -250,8 +253,8 @@ class NotifyFunctionTest {
         .isEqualTo(expected);
   }
 
-  private WithEnvironmentVariables enableEmailOrTextNotification(
-      final WithEnvironmentVariables environment,
+  private EnvironmentVariables enableEmailOrTextNotification(
+      final EnvironmentVariables environment,
       final String enableEmailNotification,
       final String enableTextNotification) {
     return environment.and("ENABLE_EMAIL_NOTIFICATION", enableEmailNotification).
@@ -276,7 +279,7 @@ class NotifyFunctionTest {
     logHandler.assertLogged(Level.INFO, "NotifyFunction stopping");
   }
 
-  private WithEnvironmentVariables setUpEnvironmentVariables() {
+  private EnvironmentVariables setUpEnvironmentVariables() {
     return withEnvironmentVariable("PROTOCOL", "https")
         .and("ENV_DOMAIN", "-test")
         .and("TRADE_PLATFORM_AUTH_URL", "TRADE_PLATFORM_AUTH_URL")
