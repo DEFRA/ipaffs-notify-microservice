@@ -1,6 +1,7 @@
 package uk.gov.defra.tracesx.notify;
 
 import com.microsoft.azure.functions.ExecutionContext;
+import java.util.Objects;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -34,7 +35,8 @@ public class LocalFunctionRunner {
     };
 
     new NotifyFunction().notifyTextOrEmail(
-        IOUtils.toString(LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json"),
+        IOUtils.toString(Objects.requireNonNull(
+                LocalFunctionRunner.class.getResourceAsStream("/emailQueueMessage.json")),
             StandardCharsets.UTF_8)
         , executionContext);
   }

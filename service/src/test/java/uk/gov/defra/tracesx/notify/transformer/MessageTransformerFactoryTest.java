@@ -7,16 +7,16 @@ import uk.gov.defra.tracesx.notify.email.transformer.BatchEmailMessageTransforme
 import uk.gov.defra.tracesx.notify.model.MessageType;
 import uk.gov.defra.tracesx.notify.sms.transformer.BatchSmsMessageTransformer;
 
-public class MessageTransformerFactoryTest {
+class MessageTransformerFactoryTest {
 
   @Test
-  public void getTransformer_returnBatchEmailMessageTransformer_whenMessageTypeIsEmail(){
+  void getTransformer_returnBatchEmailMessageTransformer_whenMessageTypeIsEmail(){
     MessageTransformer messageTransformer = MessageTransformerFactory.getTransformer(MessageType.EMAIL);
     assertThat(messageTransformer).isInstanceOf(BatchEmailMessageTransformer.class);
   }
 
   @Test
-  public void getTransformer_returnBatchTextMessageTransformer_whenMessageTypeIsText(){
+  void getTransformer_returnBatchTextMessageTransformer_whenMessageTypeIsText(){
     MessageTransformer messageTransformer = MessageTransformerFactory.getTransformer(MessageType.TEXT);
     assertThat(messageTransformer).isInstanceOf(BatchSmsMessageTransformer.class);
   }

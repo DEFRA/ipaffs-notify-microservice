@@ -7,10 +7,9 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>spring-boot-parent</artifactId>
-    <version>2.0.272</version>
+    <version>3.0.3</version>
   </parent>
 
-  <groupId>uk.gov.defra.tracesx</groupId>
   <artifactId>notify-azure-function</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -18,15 +17,12 @@
   <name>notify-function</name>
 
   <properties>
-    <java.version>11</java.version>
-
-    <azure.functions.java.library.version>1.4.0</azure.functions.java.library.version>
-    <azure.functions.maven.plugin.version>1.9.0</azure.functions.maven.plugin.version>
-    <azure.core.serializer.json.jackson.version>1.2.8</azure.core.serializer.json.jackson.version>
-    <commons.io.version>2.6</commons.io.version>
-    <javax.xml.bind.version>2.3.0</javax.xml.bind.version>
-    <system-lambda.version>1.1.1</system-lambda.version>
+    <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
+    <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
+    <commons.io.version>2.11.0</commons.io.version>
+    <mockwebserver.version>4.10.0</mockwebserver.version>
     <spring-boot-common.version>2.0.27</spring-boot-common.version>
+    <system-stubs.version>2.1.2</system-stubs.version>
 
     <stagingDirectory>
       ${project.build.directory}/azure-functions/${functionAppName}
@@ -41,73 +37,30 @@
       <version>${azure.functions.java.library.version}</version>
     </dependency>
     <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${javax.xml.bind.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-webflux</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.azure</groupId>
-      <artifactId>azure-core-serializer-json-jackson</artifactId>
-      <version>${azure.core.serializer.json.jackson.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
       <artifactId>TracesX-SpringBoot-Common-Version</artifactId>
       <version>${spring-boot-common.version}</version>
     </dependency>
-
     <!-- Test -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>io.projectreactor</groupId>
       <artifactId>reactor-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>com.github.stefanbirkner</groupId>
-      <artifactId>system-lambda</artifactId>
-      <version>${system-lambda.version}</version>
+      <groupId>uk.org.webcompere</groupId>
+      <artifactId>system-stubs-core</artifactId>
+      <version>${system-stubs.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>${okhttp.version}</version>
+      <version>${mockwebserver.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -125,25 +78,6 @@
           <groupId>com.microsoft.azure</groupId>
           <artifactId>azure-functions-maven-plugin</artifactId>
           <version>${azure.functions.maven.plugin.version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${maven.checkstyle.version}</version>
-          <configuration>
-            <configLocation>${project.build.directory}/maven-shared-archive-resources/google_checks_ipaffs.xml</configLocation>
-            <logViolationsToConsole>true</logViolationsToConsole>
-            <outputFile>${project.build.directory}/checkstyle-result.xml</outputFile>
-            <violationSeverity>warning</violationSeverity>
-            <failsOnError>true</failsOnError>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>check</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -172,63 +106,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>${stagingDirectory}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}</directory>
-                  <includes>
-                    <include>host.json</include>
-                    <include>local.settings.json</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${stagingDirectory}/lib</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <includeScope>runtime</includeScope>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!--Remove obj folder generated by .NET SDK in maven clean-->
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>obj</directory>
-            </fileset>
-          </filesets>
-        </configuration>
       </plugin>
     </plugins>
   </build>

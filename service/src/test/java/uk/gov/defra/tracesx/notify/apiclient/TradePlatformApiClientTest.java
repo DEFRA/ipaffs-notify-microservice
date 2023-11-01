@@ -3,6 +3,10 @@ package uk.gov.defra.tracesx.notify.apiclient;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 import okhttp3.mockwebserver.MockWebServer;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +18,7 @@ import uk.gov.defra.tracesx.notify.email.apimodel.BatchEmailTemplate;
 import uk.gov.defra.tracesx.notify.exception.NotifyException;
 import uk.gov.defra.tracesx.notify.utils.WebServerUtils;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.logging.Logger;
-
-public class TradePlatformApiClientTest {
+class TradePlatformApiClientTest {
 
   private TradePlatformApiClient service;
 
@@ -39,7 +38,7 @@ public class TradePlatformApiClientTest {
   }
 
   @Test
-  public void submitRequest_ReturnsOK_WhenCorrectPayloadIsSent() throws IOException {
+  void submitRequest_ReturnsOK_WhenCorrectPayloadIsSent() throws IOException {
     webServerUtils.enqueueOk(
         IOUtils.resourceToString("/trade-notify-responses/success_response.json",
             StandardCharsets.UTF_8));
@@ -52,11 +51,11 @@ public class TradePlatformApiClientTest {
   }
 
   @Test
-  public void submitRequest_ReturnsError_WhenInCorrectPayloadIsSent() {
+  void submitRequest_ReturnsError_WhenInCorrectPayloadIsSent() {
     webServerUtils.enqueueBadRequest();
-    assertThatThrownBy(() -> service.submitRequest(
-        BatchEmailTemplate.builder().reference("12345").build())).isInstanceOf(
-            NotifyException.class)
+    BatchEmailTemplate template = BatchEmailTemplate.builder().reference("12345").build();
+    assertThatThrownBy(() -> service.submitRequest(template))
+        .isInstanceOf(NotifyException.class)
         .hasMessage("Failed to send to Trade Notify for reference -->>12345");
   }
 }

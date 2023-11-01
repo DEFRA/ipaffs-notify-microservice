@@ -1,17 +1,16 @@
 package uk.gov.defra.tracesx.notify;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static uk.org.webcompere.systemstubs.SystemStubs.withEnvironmentVariable;
 
-import com.github.stefanbirkner.systemlambda.SystemLambda.WithEnvironmentVariables;
+import java.util.logging.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.defra.tracesx.notify.utils.LogHandler;
-
-import java.util.logging.Logger;
+import uk.org.webcompere.systemstubs.environment.EnvironmentVariables;
 
 class NotifyPropertiesTest {
 
@@ -118,7 +117,7 @@ class NotifyPropertiesTest {
     logHandler.assertLogged(SEVERE, "Environment variable API_VERSION is not set");
   }
 
-  private WithEnvironmentVariables withRequiredEnvironmentVariables() {
+  private EnvironmentVariables withRequiredEnvironmentVariables() {
     return withEnvironmentVariable("ENABLE_EMAIL_NOTIFICATION", "enableEmailNotification")
         .and("ENABLE_TEXT_NOTIFICATION", "enableTextNotification")
         .and("TRADE_PLATFORM_AUTH_URL", "tradePlatformAuthUrl")
