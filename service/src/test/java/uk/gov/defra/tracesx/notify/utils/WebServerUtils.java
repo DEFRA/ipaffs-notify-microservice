@@ -6,8 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.util.function.Consumer;
-
 public class WebServerUtils {
 
   private final MockWebServer mockWebServer;
