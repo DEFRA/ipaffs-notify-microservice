@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/IMTA-12572-Migrate-AppInsight') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
