@@ -13,4 +13,5 @@ public class MessagePersonalisation {
 
   private final String referenceNumber;
   private final String bcpName;
+  private final String notificationsUrl;
 }
