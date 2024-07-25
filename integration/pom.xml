@@ -7,7 +7,7 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>integration-test-parent</artifactId>
-    <version>4.0.6</version>
+    <version>4.0.16</version>
   </parent>
 
   <artifactId>notify-azure-function-integration</artifactId>
