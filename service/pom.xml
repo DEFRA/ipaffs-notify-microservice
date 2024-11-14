@@ -7,7 +7,7 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>spring-boot-parent</artifactId>
-    <version>4.0.31</version>
+    <version>4.0.43</version>
   </parent>
 
   <artifactId>notify-azure-function</artifactId>
