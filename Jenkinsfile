@@ -1,4 +1,4 @@
-@Library('pipeline-library') _
+@Library('pipeline-library@feature/IMTA-19412-remove-mvn-dep-check') _
 
 javaAzureFunctionPipeline {
     SERVICE_NAME = "notify-microservice"
