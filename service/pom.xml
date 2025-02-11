@@ -6,8 +6,8 @@
 
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
-    <artifactId>spring-boot-parent</artifactId>
-    <version>4.0.43</version>
+    <artifactId>TracesX-SpringBoot-Common-Parent</artifactId>
+    <version>4.0.6</version>
   </parent>
 
   <artifactId>notify-azure-function</artifactId>
@@ -20,8 +20,7 @@
     <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
     <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
     <commons.io.version>2.11.0</commons.io.version>
-    <mockwebserver.version>4.10.0</mockwebserver.version>
-    <spring-boot-common.version>4.0.1</spring-boot-common.version>
+    <okhttp.version>4.12.0</okhttp.version>
     <system-stubs.version>2.1.2</system-stubs.version>
 
     <stagingDirectory>
@@ -42,8 +41,19 @@
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
+      <artifactId>TracesX-SpringBoot-Common-Health</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>uk.gov.defra.tracesx</groupId>
+      <artifactId>TracesX-SpringBoot-Common-Logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>uk.gov.defra.tracesx</groupId>
+      <artifactId>TracesX-SpringBoot-Common-Security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>uk.gov.defra.tracesx</groupId>
       <artifactId>TracesX-SpringBoot-Common-Version</artifactId>
-      <version>${spring-boot-common.version}</version>
     </dependency>
     <!-- Test -->
     <dependency>
@@ -60,7 +70,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>mockwebserver</artifactId>
-      <version>${mockwebserver.version}</version>
+      <version>${okhttp.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
