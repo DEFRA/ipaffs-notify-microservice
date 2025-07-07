@@ -1,0 +1,8 @@
+@Library('pipeline-library') _
+
+githubMigrationPipeline {
+    GITHUB_REPO = 'DEFRA/ipaffs-notify-microservice'
+    GITLAB_PROJECT = 'imports/notify-microservice'
+    MIGRATE_PULL_REQUEST = true
+    LOG_LEVEL = 'DEBUG'
+}
