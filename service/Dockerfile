@@ -1,6 +1,6 @@
 ARG BASE_IMAGE
 ARG JAVA_VERSION=17
-FROM $BASE_IMAGE$JAVA_VERSION-build AS installer-env
+FROM mcr.microsoft.com/azure-functions/java:4-java21-build AS installer-env
 
 COPY ./target /target
 
@@ -9,7 +9,7 @@ RUN mkdir -p /home/site/wwwroot && \
     cd $(ls -d */|head -n 1) && \
     cp -a . /home/site/wwwroot
 
-FROM $BASE_IMAGE$JAVA_VERSION
+FROM mcr.microsoft.com/azure-functions/java:4-java21
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true

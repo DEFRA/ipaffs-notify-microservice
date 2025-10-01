@@ -7,5 +7,5 @@ javaAzureFunctionPipeline {
     ENVIRONMENT = "Sandpit"
     WAIT_FOR_VERSION = "true"
     SKIP_SELENIUM = "true"
-    JAVA_VERSION = "17"
+    JAVA_VERSION = "21"
 }

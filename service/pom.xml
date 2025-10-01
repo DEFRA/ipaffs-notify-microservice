@@ -7,7 +7,7 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>TracesX-SpringBoot-Common-Parent</artifactId>
-    <version>4.0.10</version>
+    <version>4.0.17</version>
   </parent>
 
   <artifactId>notify-azure-function</artifactId>
@@ -17,6 +17,7 @@
   <name>notify-function</name>
 
   <properties>
+    <java.version>21</java.version>
     <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
     <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
     <commons.io.version>2.19.0</commons.io.version>

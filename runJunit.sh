@@ -1,4 +1,4 @@
 #!/bin/sh
 
-export JAVA_HOME=$JAVA_HOME_11
+sdk env
 mvn clean test jacoco:report -f service/pom.xml --settings service/vs-maven.xml -Dmaven.repo.local=${WORKSPACE}/.m2
