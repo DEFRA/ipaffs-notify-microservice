@@ -1,5 +1,5 @@
 #!/bin/sh
-
+sdk env
 $( awk '{print "export", $1}' ./.env )
 
 mvn clean verify -f integration/pom.xml \
