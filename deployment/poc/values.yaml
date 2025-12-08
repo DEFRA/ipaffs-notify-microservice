@@ -1,0 +1,34 @@
+env:
+  - name: NOTIFY_QUEUE_NAME
+    value: "notify-queue"
+  - name: NOTIFY_QUEUE_CONNECTION_NAME
+    valueFrom:
+      secretKeyRef:
+        name: notify-servicebus
+        key: SERVICE_BUS_CONNECTION_STRING
+  - name: ENABLE_EMAIL_NOTIFICATION
+    value: "true"
+  - name: ENABLE_TEXT_NOTIFICATION
+    value: "true"
+  - name: TRADE_PLATFORM_AUTH_URL
+    value: "https://login.microsoftonline.com/c9d74090-b4e6-4b04-981d-e6757a160812/oauth2/v2.0/token"
+  - name: TRADE_PLATFORM_CLIENT_ID
+    value: "b23b073e-1f9c-4b93-9ac2-a99e55cdc2b4"
+  - name: TRADE_PLATFORM_NOTIFY_URL
+    value: "https://poc-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
+  - name: TRADE_PLATFORM_SCOPE
+    value: "api://poc-futuretrade-int.defra.gov.uk/.default"
+  - name: TRADE_PLATFORM_SYSTEM_NAME
+    value: "IPAFFS"
+  - name: TRADE_PLATFORM_SYSTEM_UNIQUE_ID
+    value: "38BC514D-FC26-47BF-99C2-6FCACF581AF5"
+  - name: API_VERSION
+    value: "1.0.0"
+
+resources:
+  limits:
+    cpu: "2"
+    memory: 4Gi
+  requests:
+    cpu: "500m"
+    memory: 1Gi

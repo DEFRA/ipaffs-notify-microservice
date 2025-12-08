@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - "*"
+
+pool:
+  name: 'DEFRA-COMMON-ubuntu2204-SSV5'
+
+resources:
+  repositories:
+    - repository: ipaffs-infra
+      type: github
+      endpoint: DEFRA
+      name: DEFRA/ipaffs-infra
+      ref: refs/heads/main
+
+parameters:
+  - name: environmentName
+    displayName: Environment
+    type: string
+    default: POC
+    values:
+      - POC
+
+variables:
+  - group: "${{ parameters.environmentName }}"
+  - name: serviceName
+    value: notify
+
+stages:
+  - template: /pipelines/templates/java-template.yaml@ipaffs-infra
+    parameters:
+      environmentName: "${{ parameters.environmentName }}"
+      serviceName: "${{ variables.serviceName }}"
+
+# vim: set ts=2 sts=2 sw=2 et:
