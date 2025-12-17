@@ -1,0 +1,39 @@
+repositories:
+  - name: acr
+    url: {{ requiredEnv "AZURE_CONTAINER_REGISTRY_HOST" }}
+    oci: true
+    username: test-token
+    password: ""
+
+releases:
+  - name: notify-backoffice
+    namespace: {{ requiredEnv "NAMESPACE" }}
+    version: 0.8.0
+    chart: acr/helm/v1/repo/backoffice
+    values:
+      - deployment/values.yaml
+      - deployment/{{ lower (requiredEnv "ENVIRONMENT") }}/values.yaml
+    set:
+      - name: environment
+        value: {{ requiredEnv "ENVIRONMENT" }}
+      - name: azure.location
+        value: {{ requiredEnv "AZURE_LOCATION" }}
+
+  - name: notify-webapp
+    namespace: {{ requiredEnv "NAMESPACE" }}
+    version: 0.7.1
+    chart: acr/helm/v1/repo/webapp
+    values:
+      - deployment/values.yaml
+      - deployment/{{ lower (requiredEnv "ENVIRONMENT") }}/values.yaml
+    set:
+      - name: environment
+        value: {{ requiredEnv "ENVIRONMENT" }}
+      - name: azure.clientId
+        value: {{ requiredEnv "AZURE_MANAGED_IDENTITY_CLIENT_ID" }}
+      - name: azure.location
+        value: {{ requiredEnv "AZURE_LOCATION" }}
+      - name: container.image
+        value: {{ requiredEnv "AZURE_CONTAINER_REGISTRY_HOST" }}/{{ requiredEnv "CONTAINER_IMAGE" }}
+
+# vim: set ts=2 sts=2 sw=2 et:

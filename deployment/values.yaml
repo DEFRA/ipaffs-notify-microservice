@@ -1,0 +1,21 @@
+service: notify
+
+container:
+  replicas: 1
+
+livenessProbe: {}
+
+ingress:
+  hosts: []
+
+serviceBus:
+  enabled: true
+
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secrets:
+    - secretKey: TRADE_PLATFORM_CLIENT_SECRET
+      remoteKey: trade-platform-client-secret-poc
+    - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
+      remoteKey: trade-platform-subscription-key-poc
