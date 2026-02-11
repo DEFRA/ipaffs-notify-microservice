@@ -2,8 +2,6 @@ repositories:
   - name: acr
     url: {{ requiredEnv "AZURE_CONTAINER_REGISTRY_HOST" }}
     oci: true
-    username: test-token
-    password: ""
 
 releases:
   - name: notify-backoffice
