@@ -4,7 +4,7 @@ trigger:
       - "*"
 
 pool:
-  name: 'DEFRA-COMMON-ubuntu2204-SSV5'
+  name: 'DEFRA-COMMON-UBUNTU-SSV5'
 
 resources:
   repositories:
@@ -18,9 +18,12 @@ parameters:
   - name: environmentName
     displayName: Environment
     type: string
-    default: POC
     values:
-      - POC
+      - DEV
+      - TST
+      - PRE
+      - PRD
+    default: DEV
 
 variables:
   - group: "${{ parameters.environmentName }}"
