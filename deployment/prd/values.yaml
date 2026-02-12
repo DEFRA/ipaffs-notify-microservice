@@ -15,9 +15,9 @@ env:
   - name: TRADE_PLATFORM_CLIENT_ID
     value: "b23b073e-1f9c-4b93-9ac2-a99e55cdc2b4"
   - name: TRADE_PLATFORM_NOTIFY_URL
-    value: "https://poc-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
+    value: "https://prd-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
   - name: TRADE_PLATFORM_SCOPE
-    value: "api://poc-futuretrade-int.defra.gov.uk/.default"
+    value: "api://prd-futuretrade-int.defra.gov.uk/.default"
   - name: TRADE_PLATFORM_SYSTEM_NAME
     value: "IPAFFS"
   - name: TRADE_PLATFORM_SYSTEM_UNIQUE_ID
