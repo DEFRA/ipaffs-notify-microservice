@@ -10,14 +10,8 @@ env:
     value: "true"
   - name: ENABLE_TEXT_NOTIFICATION
     value: "true"
-  - name: TRADE_PLATFORM_AUTH_URL
-    value: "https://login.microsoftonline.com/c9d74090-b4e6-4b04-981d-e6757a160812/oauth2/v2.0/token"
-  - name: TRADE_PLATFORM_CLIENT_ID
-    value: "b23b073e-1f9c-4b93-9ac2-a99e55cdc2b4"
   - name: TRADE_PLATFORM_NOTIFY_URL
     value: "https://prd-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
-  - name: TRADE_PLATFORM_SCOPE
-    value: "api://prd-futuretrade-int.defra.gov.uk/.default"
   - name: TRADE_PLATFORM_SYSTEM_NAME
     value: "IPAFFS"
   - name: TRADE_PLATFORM_SYSTEM_UNIQUE_ID
