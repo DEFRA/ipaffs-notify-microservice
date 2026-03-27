@@ -1,4 +1,4 @@
-service: notify
+service: notify-service
 
 container:
   replicas: 1
