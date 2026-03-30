@@ -4,7 +4,7 @@ env:
   - name: NOTIFY_QUEUE_CONNECTION_NAME
     valueFrom:
       secretKeyRef:
-        name: notify-servicebus
+        name: notify-service-servicebus
         key: SERVICE_BUS_CONNECTION_STRING
   - name: ENABLE_EMAIL_NOTIFICATION
     value: "true"
