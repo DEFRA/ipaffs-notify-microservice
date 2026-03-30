@@ -34,7 +34,7 @@ parameters:
 variables:
   - group: "${{ parameters.environmentName }}"
   - name: serviceName
-    value: notify
+    value: notify-service
 
 stages:
   - template: /pipelines/templates/java-template.yaml@ipaffs-infra
