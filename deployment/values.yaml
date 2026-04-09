@@ -3,11 +3,6 @@ service: notify-service
 container:
   replicas: 1
 
-livenessProbe: {}
-
-ingress:
-  hosts: []
-
 serviceBus:
   enabled: true
 
@@ -19,3 +14,5 @@ externalSecret:
       remoteKey: tradePlatformClientSecret
     - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
       remoteKey: tradePlatformSubscriptionKey
+    - secretKey: SERVICE_BUS_CONNECTION_STRING
+      remoteKey: serviceBusConnectionString
