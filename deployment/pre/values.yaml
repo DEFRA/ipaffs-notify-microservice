@@ -1,6 +1,6 @@
 env:
   - name: NOTIFY_QUEUE_NAME
-    value: "notify-queue"
+    value: "notify_queue"
   - name: NOTIFY_QUEUE_CONNECTION_NAME
     valueFrom:
       secretKeyRef:
