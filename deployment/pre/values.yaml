@@ -6,6 +6,7 @@ env:
       secretKeyRef:
         name: notify-service-servicebus
         key: SERVICE_BUS_CONNECTION_STRING
+        optional: true
   - name: ENABLE_EMAIL_NOTIFICATION
     value: "true"
   - name: ENABLE_TEXT_NOTIFICATION
