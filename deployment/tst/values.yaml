@@ -20,6 +20,17 @@ env:
   - name: API_VERSION
     value: "1.0.0"
 
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secrets:
+    - secretKey: TRADE_PLATFORM_CLIENT_SECRET
+      remoteKey: tradePlatformClientSecret
+    - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
+      remoteKey: tradePlatformSubscriptionKey
+    - secretKey: SERVICE_BUS_CONNECTION_STRING
+      remoteKey: serviceBusConnectionString
+
 resources:
   limits:
     cpu: "2"

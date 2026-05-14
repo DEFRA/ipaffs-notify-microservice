@@ -14,5 +14,3 @@ externalSecret:
       remoteKey: tradePlatformClientSecret
     - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
       remoteKey: tradePlatformSubscriptionKey
-    - secretKey: SERVICE_BUS_CONNECTION_STRING
-      remoteKey: serviceBusConnectionString
