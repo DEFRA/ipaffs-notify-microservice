@@ -20,6 +20,10 @@ env:
   - name: API_VERSION
     value: "1.0.0"
 
+serviceBus:
+  enabled: true
+  useSecrets: true
+
 resources:
   limits:
     cpu: "2"
