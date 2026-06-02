@@ -6,6 +6,13 @@ container:
 serviceBus:
   enabled: true
 
+keda:
+  enabled: true
+  pollingInterval: 30
+  maxReplicaCount: 10
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
 externalSecret:
   enabled: true
   refreshInterval: 1h

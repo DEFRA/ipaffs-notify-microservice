@@ -20,6 +20,7 @@
     <java.version>21</java.version>
     <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
     <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
+    <azure.messaging.servicebus.version>7.15.2</azure.messaging.servicebus.version>
     <commons.io.version>2.19.0</commons.io.version>
     <okhttp.version>4.12.0</okhttp.version>
     <system-stubs.version>2.1.2</system-stubs.version>
@@ -35,6 +36,11 @@
       <groupId>com.microsoft.azure.functions</groupId>
       <artifactId>azure-functions-java-library</artifactId>
       <version>${azure.functions.java.library.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.azure</groupId>
+      <artifactId>azure-messaging-servicebus</artifactId>
+      <version>${azure.messaging.servicebus.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -115,6 +121,30 @@
             <goals>
               <goal>package</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <executions>
+          <execution>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.microsoft.azure</groupId>
+                  <artifactId>applicationinsights-agent</artifactId>
+                  <version>3.7.6</version>
+                  <outputDirectory>${project.build.directory}/agent-libs</outputDirectory>
+                  <destFileName>applicationinsights-agent.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <id>copy-appinsights-agent</id>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>

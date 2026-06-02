@@ -19,6 +19,21 @@ env:
     value: "38BC514D-FC26-47BF-99C2-6FCACF581AF5"
   - name: API_VERSION
     value: "1.0.0"
+  - name: KEDA_MAX_MESSAGES
+    value: "100"
+  - name: KEDA_RECEIVE_WAIT_SECONDS
+    value: "10"
+  - name: KEDA_MAX_EMPTY_RECEIVES
+    value: "3"
+
+keda:
+  enabled: true
+  triggers:
+    - type: azure-servicebus
+      metadata:
+        queueName: "notify-queue"
+        connectionFromEnv: NOTIFY_QUEUE_CONNECTION_NAME
+        messageCount: "5"
 
 serviceBus:
   enabled: true
