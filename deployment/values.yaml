@@ -9,7 +9,7 @@ serviceBus:
 keda:
   enabled: true
   pollingInterval: 30
-  maxReplicaCount: 10
+  maxReplicaCount: 1
   successfulJobsHistoryLimit: 3
   failedJobsHistoryLimit: 1
 
