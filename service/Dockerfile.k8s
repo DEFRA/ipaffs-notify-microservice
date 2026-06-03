@@ -12,6 +12,7 @@ COPY ./target/azure-functions/${FUNCTION_APP_NAME}/ ./
 COPY ./target/agent-libs/applicationinsights-agent.jar ./applicationinsights-agent.jar
 COPY ./lib/applicationinsights.json ./applicationinsights.json
 
-# Include all staged jars: bin contains the function jar and lib contains dependencies.
-ENTRYPOINT ["java", "-javaagent:/home/app/applicationinsights-agent.jar", "-cp", "/home/app/lib/*:/home/app/bin/*:/home/app/*", "uk.gov.defra.tracesx.notify.KedaJobRunner"]
+RUN cp /home/app/notify-azure-function-*.jar /home/app/app.jar
 
+# Include all staged jars: bin contains the function jar and lib contains dependencies.
+ENTRYPOINT ["java", "-javaagent:/home/app/applicationinsights-agent.jar", "-cp", "/home/app/lib/*:/home/app/bin/*:/home/app/app.jar", "uk.gov.defra.tracesx.notify.KedaJobRunner"]

@@ -1,14 +1,26 @@
 package uk.gov.defra.tracesx.notify;
 
+import static java.lang.Boolean.parseBoolean;
+
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverClient;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.microsoft.azure.functions.ExecutionContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.springframework.web.reactive.function.client.WebClient;
+import uk.gov.defra.tracesx.notify.apiclient.TradePlatformApiClient;
+import uk.gov.defra.tracesx.notify.apimodel.SuccessResponse;
+import uk.gov.defra.tracesx.notify.apimodel.Template;
+import uk.gov.defra.tracesx.notify.model.MessageType;
+import uk.gov.defra.tracesx.notify.model.QueueMessage;
+import uk.gov.defra.tracesx.notify.service.TradePlatformTokenGeneratorService;
+import uk.gov.defra.tracesx.notify.transformer.MessageTransformer;
+import uk.gov.defra.tracesx.notify.transformer.MessageTransformerFactory;
 
 /**
  * Entry point for running this service as a KEDA ScaledJob.
@@ -16,6 +28,7 @@ import java.util.logging.Logger;
 public class KedaJobRunner {
 
   private static final Logger LOGGER = Logger.getLogger(KedaJobRunner.class.getName());
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   private static final String QUEUE_NAME_ENV = "NOTIFY_QUEUE_NAME";
   private static final String QUEUE_CONNECTION_ENV = "NOTIFY_QUEUE_CONNECTION_NAME";
@@ -46,9 +59,6 @@ public class KedaJobRunner {
             + "maxEmptyReceives=%d",
         queueName, maxMessages, receiveWaitSeconds, maxEmptyReceives));
 
-    NotifyFunction notifyFunction = new NotifyFunction();
-    ExecutionContext executionContext = new KedaExecutionContext(LOGGER);
-
     try (ServiceBusReceiverClient receiver = new ServiceBusClientBuilder()
         .connectionString(connectionString)
         .receiver()
@@ -74,7 +84,7 @@ public class KedaJobRunner {
         LOGGER.info(() -> String.format("Processing Notify message with id %s",
             message.getMessageId()));
 
-        processMessage(notifyFunction, executionContext, message);
+        processMessage(message);
         receiver.complete(message);
         processed++;
       }
@@ -84,13 +94,90 @@ public class KedaJobRunner {
     }
   }
 
-  private void processMessage(NotifyFunction notifyFunction, ExecutionContext executionContext,
-      ServiceBusReceivedMessage message) {
+  private void processMessage(ServiceBusReceivedMessage message) {
     try {
-      notifyFunction.notifyTextOrEmail(message.getBody().toString(), executionContext);
+      NotifyProperties notifyProperties = NotifyProperties.properties(LOGGER);
+      QueueMessage queueMessage = OBJECT_MAPPER.readValue(message.getBody().toString(),
+          QueueMessage.class);
+      LOGGER.info(() -> String.format(
+          "Notification reference received from queue %s, with template ID %s",
+          queueMessage.getMessagePersonalisation().getReferenceNumber(),
+          queueMessage.getMessageTemplateId()));
+
+      if (isEligibleForNotification(notifyProperties, queueMessage)) {
+        submitForNotification(notifyProperties, queueMessage);
+      } else {
+        logNonSubmittedMessage(queueMessage);
+      }
     } catch (JsonProcessingException exception) {
       throw new IllegalStateException("Failed to process Notify message", exception);
     }
+  }
+
+  private void logNonSubmittedMessage(QueueMessage queueMessage) {
+    logMessage(queueMessage, queueMessage.getEmails(), "emails");
+    logMessage(queueMessage, queueMessage.getPhoneNumbers(), "phone numbers");
+  }
+
+  private static void logMessage(QueueMessage queueMessage, List<String> contactsDetails,
+      String type) {
+    if (contactsDetails != null) {
+      LOGGER.info(() -> String.format(
+          "Message not eligible for sending, message had %d %s for template "
+              + "ID %s and notification reference %s",
+          contactsDetails.size(),
+          type,
+          queueMessage.getMessageTemplateId(),
+          queueMessage.getMessagePersonalisation().getReferenceNumber()));
+    }
+  }
+
+  private boolean isEligibleForNotification(NotifyProperties notifyProperties,
+      QueueMessage queueMessage) {
+    return isEligibleForMessageType(MessageType.EMAIL, queueMessage,
+        notifyProperties.getEnableEmailNotification())
+        || isEligibleForMessageType(MessageType.TEXT, queueMessage,
+        notifyProperties.getEnableTextNotification());
+  }
+
+  private boolean isEligibleForMessageType(MessageType messageType, QueueMessage queueMessage,
+      String enableTextNotificationViaTradePlatform) {
+    return queueMessage.getMessageType().equals(messageType) && parseBoolean(
+        enableTextNotificationViaTradePlatform);
+  }
+
+  private void submitForNotification(NotifyProperties notifyProperties, QueueMessage queueMessage) {
+    TradePlatformApiClient tradePlatformApiClient = tradePlatformApiClient(notifyProperties);
+    MessageTransformer messageTransformer = MessageTransformerFactory.getTransformer(
+        queueMessage.getMessageType());
+    Template template = messageTransformer.transform(queueMessage,
+        notifyProperties.getTradePlatformSystemName(),
+        notifyProperties.getTradePlatformSystemUniqueId());
+    SuccessResponse successResponse = tradePlatformApiClient.submitRequest(template);
+    LOGGER.info(() -> String.format("Successfully sent message to Notify API (reference %s) for"
+            + " processing of notification -->> %s", successResponse.getReference(),
+        template.getReference()));
+  }
+
+  private TradePlatformApiClient tradePlatformApiClient(NotifyProperties properties) {
+    String token = tradePlatformTokenGeneratorService(properties).generateToken();
+    return new TradePlatformApiClient(
+        LOGGER,
+        WebClient.create(),
+        token,
+        URI.create(properties.getTradePlatformNotifyUrl()),
+        properties.getTradePlatformSubscriptionKey());
+  }
+
+  private TradePlatformTokenGeneratorService tradePlatformTokenGeneratorService(
+      NotifyProperties properties) {
+    return new TradePlatformTokenGeneratorService(
+        LOGGER,
+        WebClient.create(),
+        properties.getTradePlatformAuthUrl(),
+        properties.getTradePlatformClientId(),
+        properties.getTradePlatformClientSecret(),
+        properties.getTradePlatformScope());
   }
 
   private static String requiredEnv(String name) {
@@ -109,22 +196,4 @@ public class KedaJobRunner {
     return Integer.parseInt(value);
   }
 
-  private record KedaExecutionContext(Logger logger) implements ExecutionContext {
-
-    @Override
-    public Logger getLogger() {
-      return logger;
-    }
-
-    @Override
-    public String getInvocationId() {
-      return "keda-job";
-    }
-
-    @Override
-    public String getFunctionName() {
-      return "NotifyFunction";
-    }
-  }
 }
-
