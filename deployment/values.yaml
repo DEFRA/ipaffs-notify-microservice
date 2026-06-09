@@ -3,6 +3,17 @@ service: notify-service
 container:
   replicas: 1
 
+config:
+  JDK_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75.0"
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 700Mi
+  limits:
+    cpu: 2
+    memory: 700Mi
+
 serviceBus:
   enabled: true
 
