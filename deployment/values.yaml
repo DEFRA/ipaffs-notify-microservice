@@ -4,7 +4,7 @@ container:
   replicas: 1
 
 config:
-  JDK_JAVA_OPTIONS: "-XX:MaxRAMPercentage=75.0"
+  JDK_JAVA_OPTIONS: "-XX:MaxRAMPercentage=60.0"
 
 resources:
   requests:
