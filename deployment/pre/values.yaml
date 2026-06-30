@@ -3,12 +3,6 @@ suspend: true
 env:
   - name: NOTIFY_QUEUE_NAME
     value: "notify_queue"
-  - name: NOTIFY_QUEUE_CONNECTION_NAME
-    valueFrom:
-      secretKeyRef:
-        name: notify-service-servicebus
-        key: SERVICE_BUS_CONNECTION_STRING
-        optional: true
   - name: ENABLE_EMAIL_NOTIFICATION
     value: "true"
   - name: ENABLE_TEXT_NOTIFICATION
@@ -45,7 +39,7 @@ externalSecret:
       remoteKey: tradePlatformClientSecret
     - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
       remoteKey: tradePlatformSubscriptionKey
-    - secretKey: SERVICE_BUS_CONNECTION_STRING
+    - secretKey: NOTIFY_QUEUE_CONNECTION_NAME
       remoteKey: serviceBusConnectionString
 
 resources:
