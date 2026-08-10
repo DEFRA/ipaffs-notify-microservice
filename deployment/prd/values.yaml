@@ -1,5 +1,3 @@
-suspend: true
-
 env:
   - name: NOTIFY_QUEUE_NAME
     value: "notify_queue"
