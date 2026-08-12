@@ -1,20 +1,18 @@
-ARG BASE_IMAGE
-ARG JAVA_VERSION=17
-FROM mcr.microsoft.com/azure-functions/java:4-java21-build AS installer-env
+FROM eclipse-temurin:21-jre
 
-COPY ./target /target
-
-RUN mkdir -p /home/site/wwwroot && \
-    cd ./target/azure-functions/ && \
-    cd $(ls -d */|head -n 1) && \
-    cp -a . /home/site/wwwroot
-
-FROM mcr.microsoft.com/azure-functions/java:4-java21
-
-ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
-    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
+WORKDIR /home/app
 
 ARG SERVICE_VERSION
 ENV API_VERSION=${SERVICE_VERSION}
+ENV FUNCTION_APP_NAME=notify-azure-function
 
-COPY --from=installer-env ["/home/site/wwwroot", "/home/site/wwwroot"]
+# Copy the packaged Azure Function output produced by `mvn package` (or the build artifact)
+# into the image so the Kubernetes job runner can invoke the processing code directly.
+COPY ./target/azure-functions/${FUNCTION_APP_NAME}/ ./
+COPY ./target/agent-libs/applicationinsights-agent.jar ./applicationinsights-agent.jar
+COPY ./lib/applicationinsights.json ./applicationinsights.json
+
+RUN cp /home/app/notify-azure-function-*.jar /home/app/app.jar
+
+# Include all staged jars: bin contains the function jar and lib contains dependencies.
+ENTRYPOINT ["java", "-javaagent:/home/app/applicationinsights-agent.jar", "-cp", "/home/app/lib/*:/home/app/bin/*:/home/app/app.jar", "uk.gov.defra.tracesx.notify.KedaJobRunner"]
