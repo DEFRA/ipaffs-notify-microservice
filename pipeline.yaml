@@ -42,5 +42,7 @@ stages:
       environmentName: "${{ parameters.environmentName }}"
       serviceName: "${{ variables.serviceName }}"
       dockerFile: Dockerfile.k8s
+      sonarAnalysis: true
+      sonarReferenceBranch: master
 
 # vim: set ts=2 sts=2 sw=2 et:
