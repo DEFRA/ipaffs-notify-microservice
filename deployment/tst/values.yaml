@@ -1,25 +1,3 @@
-env:
-  - name: NOTIFY_QUEUE_NAME
-    value: "notify_queue"
-  - name: ENABLE_EMAIL_NOTIFICATION
-    value: "true"
-  - name: ENABLE_TEXT_NOTIFICATION
-    value: "true"
-  - name: TRADE_PLATFORM_NOTIFY_URL
-    value: "https://tst-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
-  - name: TRADE_PLATFORM_SYSTEM_NAME
-    value: "IPAFFS"
-  - name: TRADE_PLATFORM_SYSTEM_UNIQUE_ID
-    value: "38BC514D-FC26-47BF-99C2-6FCACF581AF5"
-  - name: API_VERSION
-    value: "1.0.0"
-  - name: KEDA_MAX_MESSAGES
-    value: "100"
-  - name: KEDA_RECEIVE_WAIT_SECONDS
-    value: "10"
-  - name: KEDA_MAX_EMPTY_RECEIVES
-    value: "3"
-
 keda:
   enabled: true
   triggers:
@@ -28,7 +6,6 @@ keda:
         queueName: "notify_queue"
         connectionFromEnv: NOTIFY_QUEUE_CONNECTION_NAME
         messageCount: "5"
-
 externalSecret:
   enabled: true
   refreshInterval: 1h
@@ -39,7 +16,6 @@ externalSecret:
       remoteKey: tradePlatformSubscriptionKey
     - secretKey: NOTIFY_QUEUE_CONNECTION_NAME
       remoteKey: serviceBusConnectionString
-
 resources:
   limits:
     cpu: "2"
@@ -47,3 +23,14 @@ resources:
   requests:
     cpu: "500m"
     memory: 1Gi
+config:
+  NOTIFY_QUEUE_NAME: "notify_queue"
+  ENABLE_EMAIL_NOTIFICATION: "true"
+  ENABLE_TEXT_NOTIFICATION: "true"
+  TRADE_PLATFORM_NOTIFY_URL: "https://tst-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
+  TRADE_PLATFORM_SYSTEM_NAME: "IPAFFS"
+  TRADE_PLATFORM_SYSTEM_UNIQUE_ID: "38BC514D-FC26-47BF-99C2-6FCACF581AF5"
+  API_VERSION: "1.0.0"
+  KEDA_MAX_MESSAGES: "100"
+  KEDA_RECEIVE_WAIT_SECONDS: "10"
+  KEDA_MAX_EMPTY_RECEIVES: "3"
