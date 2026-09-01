@@ -16,6 +16,7 @@ resources:
 
 serviceBus:
   enabled: true
+  connectionStringSecretKey: NOTIFY_QUEUE_CONNECTION_NAME
 
 keda:
   enabled: true
