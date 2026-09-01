@@ -15,4 +15,6 @@ COPY ./lib/applicationinsights.json ./applicationinsights.json
 RUN cp /home/app/notify-azure-function-*.jar /home/app/app.jar
 
 # Include all staged jars: bin contains the function jar and lib contains dependencies.
-ENTRYPOINT ["java", "-javaagent:/home/app/applicationinsights-agent.jar", "-cp", "/home/app/lib/*:/home/app/bin/*:/home/app/app.jar", "uk.gov.defra.tracesx.notify.KedaJobRunner"]
+# DEV exposes the generated Service Bus secret under SERVICE_BUS_CONNECTION_STRING;
+# the other environments already provide NOTIFY_QUEUE_CONNECTION_NAME directly.
+ENTRYPOINT ["sh", "-c", "export NOTIFY_QUEUE_CONNECTION_NAME=\"${NOTIFY_QUEUE_CONNECTION_NAME:-$SERVICE_BUS_CONNECTION_STRING}\"; exec java -javaagent:/home/app/applicationinsights-agent.jar -cp '/home/app/lib/*:/home/app/bin/*:/home/app/app.jar' uk.gov.defra.tracesx.notify.KedaJobRunner"]

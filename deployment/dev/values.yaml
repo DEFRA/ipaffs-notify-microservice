@@ -1,17 +1,10 @@
-env:
-  - name: NOTIFY_QUEUE_CONNECTION_NAME
-    valueFrom:
-      secretKeyRef:
-        name: notify-service-servicebus
-        key: SERVICE_BUS_CONNECTION_STRING
-        optional: true
 keda:
   enabled: true
   triggers:
     - type: azure-servicebus
       metadata:
         queueName: "notify-queue"
-        connectionFromEnv: NOTIFY_QUEUE_CONNECTION_NAME
+        connectionFromEnv: SERVICE_BUS_CONNECTION_STRING
         messageCount: "5"
 serviceBus:
   enabled: true
