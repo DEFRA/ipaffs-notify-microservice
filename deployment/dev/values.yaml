@@ -9,6 +9,17 @@ keda:
 serviceBus:
   enabled: true
   useSecrets: true
+
+container:
+  command: /usr/bin/env
+  args:
+    - NOTIFY_QUEUE_CONNECTION_NAME=$(SERVICE_BUS_CONNECTION_STRING)
+    - java
+    - -javaagent:/home/app/applicationinsights-agent.jar
+    - -cp
+    - /home/app/lib/*:/home/app/bin/*:/home/app/app.jar
+    - uk.gov.defra.tracesx.notify.KedaJobRunner
+
 resources:
   limits:
     cpu: "2"
