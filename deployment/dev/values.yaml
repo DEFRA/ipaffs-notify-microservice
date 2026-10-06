@@ -3,7 +3,7 @@ keda:
   triggers:
     - type: azure-servicebus
       metadata:
-        queueName: "notify-queue"
+        queueName: "notify_queue"
         connectionFromEnv: NOTIFY_QUEUE_CONNECTION_NAME
         messageCount: "5"
 
@@ -30,7 +30,7 @@ resources:
     memory: 1Gi
 
 config:
-  NOTIFY_QUEUE_NAME: "notify-queue"
+  NOTIFY_QUEUE_NAME: "notify_queue"
   ENABLE_EMAIL_NOTIFICATION: "true"
   ENABLE_TEXT_NOTIFICATION: "true"
   TRADE_PLATFORM_NOTIFY_URL: "https://snd-internal-gateway.trade.azure.defra.cloud/trade-notify/v1"
