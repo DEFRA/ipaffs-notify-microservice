@@ -8,8 +8,19 @@ keda:
         messageCount: "5"
 
 serviceBus:
+  enabled: false
+  useSecrets: false
+
+externalSecret:
   enabled: true
-  useSecrets: true
+  refreshInterval: 1h
+  secrets:
+    - secretKey: TRADE_PLATFORM_CLIENT_SECRET
+      remoteKey: tradePlatformClientSecret
+    - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
+      remoteKey: tradePlatformSubscriptionKey
+    - secretKey: NOTIFY_QUEUE_CONNECTION_NAME
+      remoteKey: serviceBusConnectionString
 
 resources:
   limits:
