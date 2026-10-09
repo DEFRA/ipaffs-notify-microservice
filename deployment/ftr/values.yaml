@@ -1,0 +1,13 @@
+# Overlay on DEV values for feature namespaces. All bus connections use the ASO-managed namespace bus.
+serviceBus:
+  enabled: true
+  useSecrets: true
+  connectionStringSecretKey: SERVICE_BUS_CONNECTION_STRING
+  connectionStringAliases:
+  - NOTIFY_QUEUE_CONNECTION_NAME
+externalSecret:
+  secrets:
+  - secretKey: TRADE_PLATFORM_CLIENT_SECRET
+    remoteKey: tradePlatformClientSecret
+  - secretKey: TRADE_PLATFORM_SUBSCRIPTION_KEY
+    remoteKey: tradePlatformSubscriptionKey
