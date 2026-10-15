@@ -1,0 +1,6 @@
+# Only send the files the Dockerfile copies
+*
+!target/agent-libs/
+!lib/
+!target/azure-functions/notify-azure-function/lib/
+!target/azure-functions/notify-azure-function/*.jar
