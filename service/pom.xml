@@ -20,10 +20,12 @@
     <java.version>21</java.version>
     <azure.functions.java.library.version>3.0.0</azure.functions.java.library.version>
     <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
-    <azure.messaging.servicebus.version>7.15.2</azure.messaging.servicebus.version>
+    <azure.messaging.servicebus.version>7.17.12</azure.messaging.servicebus.version>
     <commons.io.version>2.19.0</commons.io.version>
+    <mockserver.client.version>5.15.0</mockserver.client.version>
     <okhttp.version>4.12.0</okhttp.version>
     <system-stubs.version>2.1.2</system-stubs.version>
+    <testcontainers.version>2.0.5</testcontainers.version>
 
     <stagingDirectory>
       ${project.build.directory}/azure-functions/${functionAppName}
@@ -85,6 +87,32 @@
       <artifactId>commons-io</artifactId>
       <version>${commons.io.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-azure</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-mssqlserver</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers-mockserver</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mock-server</groupId>
+      <artifactId>mockserver-client-java</artifactId>
+      <version>${mockserver.client.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 
@@ -145,6 +173,19 @@
             </goals>
             <id>copy-appinsights-agent</id>
             <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Runs *IT classes after package: ImageSmokeIT needs the packaged function -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

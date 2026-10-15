@@ -1,18 +1,32 @@
-FROM eclipse-temurin:21-jre
+ARG IMAGE_ACR=docker.io
 
-WORKDIR /home/app
+# Stage 1: source of the Java truststore with the Defra certificates (base image mirrored into
+# ACR by the pipeline)
+FROM ${IMAGE_ACR}/defradigital/java:jre-21 AS builder
 
-ARG SERVICE_VERSION
-ENV API_VERSION=${SERVICE_VERSION}
-ENV FUNCTION_APP_NAME=notify-azure-function
+# ==============================================================================
+# Stage 2: Hardened Runtime (Google Distroless)
+# ==============================================================================
+FROM gcr.io/distroless/java21-debian13:nonroot
+WORKDIR /app
 
-# Copy the packaged Azure Function output produced by `mvn package` (or the build artifact)
-# into the image so the Kubernetes job runner can invoke the processing code directly.
-COPY ./target/azure-functions/${FUNCTION_APP_NAME}/ ./
-COPY ./target/agent-libs/applicationinsights-agent.jar ./applicationinsights-agent.jar
-COPY ./lib/applicationinsights.json ./applicationinsights.json
+# Copy Java cacerts containing Defra certificates from builder (the JRE's default truststore)
+COPY --from=builder /opt/java/openjdk/lib/security/cacerts /etc/ssl/certs/java/cacerts
 
-RUN cp /home/app/notify-azure-function-*.jar /home/app/app.jar
+# Copy Azure Application Insights agent & config
+COPY target/agent-libs/applicationinsights-agent.jar ./applicationinsights-agent.jar
+COPY lib/applicationinsights.json ./applicationinsights.json
 
-# Include all staged jars: bin contains the function jar and lib contains dependencies.
-ENTRYPOINT ["java", "-javaagent:/home/app/applicationinsights-agent.jar", "-cp", "/home/app/lib/*:/home/app/bin/*:/home/app/app.jar", "uk.gov.defra.tracesx.notify.KedaJobRunner"]
+# Copy the packaged Azure Function output produced by `mvn package`: the dependencies, and the
+# function jar on its own so the agent jar stays off the classpath
+COPY target/azure-functions/notify-azure-function/lib/ ./lib/
+COPY target/azure-functions/notify-azure-function/*.jar ./bin/
+
+# Numeric UID/GID (distroless 'nonroot') so runAsNonRoot can verify it without runAsUser
+USER 65532:65532
+
+# Processes the notify queue once, as a KEDA ScaledJob
+ENTRYPOINT ["java", \
+            "-javaagent:/app/applicationinsights-agent.jar", \
+            "-cp", "/app/lib/*:/app/bin/*", \
+            "uk.gov.defra.tracesx.notify.KedaJobRunner"]
