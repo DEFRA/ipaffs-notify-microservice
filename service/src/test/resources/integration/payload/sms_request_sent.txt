@@ -1,0 +1,5 @@
+POST /Notify/Api/SMS%20(batch)
+Content-Type: application/json
+Accept: application/json
+
+{"reference":"CHEDD-12345","systemUniqueId":"3c1f4f0e-4bb6-4f49-a3a4-6e1f43a5a2a1","templateId":"0b059aa6-1840-408c-aa1b-a53aa16b815d","systemName":"IPAFFS","notificationRequestSms":[{"mobileNumber":"07885484684","content":{"referenceNumber":"CHEDD-12345","bcpName":"Leamington","notificationsUrl":null}}],"endpoint":"/Notify/Api/SMS (batch)"}
