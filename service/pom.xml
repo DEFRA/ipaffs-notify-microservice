@@ -6,8 +6,9 @@
 
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
-    <artifactId>TracesX-SpringBoot-Common-Parent</artifactId>
-    <version>4.0.18</version>
+    <artifactId>tracesx-springboot-common-parent</artifactId>
+    <version>5.0.6</version>
+    <relativePath/>
   </parent>
 
   <artifactId>notify-azure-function</artifactId>
@@ -22,10 +23,8 @@
     <azure.functions.maven.plugin.version>1.27.0</azure.functions.maven.plugin.version>
     <azure.messaging.servicebus.version>7.17.12</azure.messaging.servicebus.version>
     <commons.io.version>2.19.0</commons.io.version>
-    <mockserver.client.version>5.15.0</mockserver.client.version>
     <okhttp.version>4.12.0</okhttp.version>
     <system-stubs.version>2.1.2</system-stubs.version>
-    <testcontainers.version>2.0.5</testcontainers.version>
 
     <stagingDirectory>
       ${project.build.directory}/azure-functions/${functionAppName}
@@ -46,23 +45,35 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-webflux</artifactId>
+      <artifactId>spring-boot-starter-webclient</artifactId>
+      <exclusions>
+        <!-- HTTP/3 native libraries for five platforms; nothing here uses HTTP/3 -->
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-codec-native-quic</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Queue messages are still read with Jackson 2, which otherwise only comes via azure-core -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
-      <artifactId>TracesX-SpringBoot-Common-Health</artifactId>
+      <artifactId>tracesx-springboot-common-health</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
-      <artifactId>TracesX-SpringBoot-Common-Logging</artifactId>
+      <artifactId>tracesx-springboot-common-logging</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
-      <artifactId>TracesX-SpringBoot-Common-Security</artifactId>
+      <artifactId>tracesx-springboot-common-security</artifactId>
     </dependency>
     <dependency>
       <groupId>uk.gov.defra.tracesx</groupId>
-      <artifactId>TracesX-SpringBoot-Common-Version</artifactId>
+      <artifactId>tracesx-springboot-common-version</artifactId>
     </dependency>
     <!-- Test -->
     <dependency>
@@ -110,7 +121,6 @@
     <dependency>
       <groupId>org.mock-server</groupId>
       <artifactId>mockserver-client-java</artifactId>
-      <version>${mockserver.client.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

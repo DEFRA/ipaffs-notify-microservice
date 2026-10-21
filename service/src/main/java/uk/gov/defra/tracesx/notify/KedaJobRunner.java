@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.web.reactive.function.client.WebClient;
+import uk.gov.defra.tracesx.notify.apiclient.JsonCodecs;
 import uk.gov.defra.tracesx.notify.apiclient.TradePlatformApiClient;
 import uk.gov.defra.tracesx.notify.apimodel.SuccessResponse;
 import uk.gov.defra.tracesx.notify.apimodel.Template;
@@ -163,7 +164,7 @@ public class KedaJobRunner {
     String token = tradePlatformTokenGeneratorService(properties).generateToken();
     return new TradePlatformApiClient(
         LOGGER,
-        WebClient.create(),
+        webClient(),
         token,
         URI.create(properties.getTradePlatformNotifyUrl()),
         properties.getTradePlatformSubscriptionKey());
@@ -173,11 +174,15 @@ public class KedaJobRunner {
       NotifyProperties properties) {
     return new TradePlatformTokenGeneratorService(
         LOGGER,
-        WebClient.create(),
+        webClient(),
         properties.getTradePlatformAuthUrl(),
         properties.getTradePlatformClientId(),
         properties.getTradePlatformClientSecret(),
         properties.getTradePlatformScope());
+  }
+
+  private static WebClient webClient() {
+    return WebClient.builder().codecs(JsonCodecs::withJackson2Defaults).build();
   }
 
   private static String requiredEnv(String name) {
