@@ -1,0 +1,5 @@
+POST /oauth2/token
+Content-Type: application/x-www-form-urlencoded
+Accept: */*
+
+grant_type=client_credentials&client_id=payload-test-client&client_secret=payload-test-secret&scope=payload-test-scope%2F.default

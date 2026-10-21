@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import uk.gov.defra.tracesx.notify.apiclient.JsonCodecs;
 import uk.gov.defra.tracesx.notify.apiclient.TradePlatformApiClient;
 import uk.gov.defra.tracesx.notify.apimodel.SuccessResponse;
 import uk.gov.defra.tracesx.notify.apimodel.Template;
@@ -126,6 +127,7 @@ public class NotifyFunction {
 
   protected WebClient getWebClientBuild(Logger logger) {
     return WebClient.builder()
+        .codecs(JsonCodecs::withJackson2Defaults)
         .filter(logResponse(logger))
         .build();
   }
@@ -143,7 +145,7 @@ public class NotifyFunction {
   }
 
   protected WebClient getWebClient() {
-    return WebClient.create();
+    return WebClient.builder().codecs(JsonCodecs::withJackson2Defaults).build();
   }
 
   protected ExchangeFilterFunction logResponse(final Logger logger) {

@@ -1,0 +1,5 @@
+POST /Notify/Api/EMAIL%20(batch)
+Content-Type: application/json
+Accept: application/json
+
+{"reference":"CHEDD-12345","systemUniqueId":"3c1f4f0e-4bb6-4f49-a3a4-6e1f43a5a2a1","templateId":"2ef3e2ac-3f33-45a5-bb50-2d6cac147601","systemName":"IPAFFS","notificationRequestEmail":[{"emailAddress":"dona_willardkgpi@demonstration.vti","content":{"referenceNumber":"CHEDD-12345","bcpName":"Leamington","notificationsUrl":null}}],"endpoint":"/Notify/Api/EMAIL (batch)"}
