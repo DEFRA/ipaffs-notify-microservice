@@ -7,7 +7,7 @@
   <parent>
     <groupId>uk.gov.defra.tracesx</groupId>
     <artifactId>tracesx-springboot-common-parent</artifactId>
-    <version>5.0.7</version>
+    <version>5.0.8</version>
     <relativePath/>
   </parent>
 
