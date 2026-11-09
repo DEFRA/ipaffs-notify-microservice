@@ -172,7 +172,7 @@
                 <artifactItem>
                   <groupId>com.microsoft.azure</groupId>
                   <artifactId>applicationinsights-agent</artifactId>
-                  <version>3.7.6</version>
+                  <version>3.7.10</version>
                   <outputDirectory>${project.build.directory}/agent-libs</outputDirectory>
                   <destFileName>applicationinsights-agent.jar</destFileName>
                 </artifactItem>
